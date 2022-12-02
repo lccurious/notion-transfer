@@ -1,0 +1,5 @@
+aiohttp==3.8.3
+beautifulsoup4==4.11.1
+notion_client==1.0.0
+numpy==1.23.5
+python-dotenv==0.21.0

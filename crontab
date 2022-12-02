@@ -1,0 +1,5 @@
+SHELL=/bin/bash
+PATH=/usr/bin:/bin:/home/ubuntu/miniconda3/bin
+# 每天凌晨4:30执行豆瓣数据库核对
+# 分 时 日 月 周
+30 4 * * * source activate notion; cd /home/ubuntu/app/notion-transfer && python sync_douban.py --sync; source deactive
