@@ -41,7 +41,6 @@ jobs:
         DOUBAN_CK: ${{ secrets.DOUBAN_CK }}
         UID: ${{ secrets.UID }}
         USER_AGENT: ${{ vars.USER_AGENT }}
-        LAST_SYNC_TIME: ${{ vars.LAST_SYNC_TIME }}
       run: |
         # perform sync operation
         python sync_douban.py --sync
