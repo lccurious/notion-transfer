@@ -1,4 +1,5 @@
 # Notion Transfer
+[![Sync Douban to Notion](https://github.com/lccurious/notion-transfer/actions/workflows/notion-douban-sync.yml/badge.svg)](https://github.com/lccurious/notion-transfer/actions/workflows/notion-douban-sync.yml)
 
 ## Installation
 
