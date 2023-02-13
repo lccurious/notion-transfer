@@ -45,9 +45,7 @@ jobs:
       run: |
         # perform sync operation
         python sync_douban.py --sync
-        # update last sync time
-        curl -X PATCH \
-          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          -H "Content-Type: application/json" \
-          -d '{"name": "LAST_SYNC_TIME", "value": $LAST_SYNC_TIME }' \
-          "https://api.github.com/repos/${{ github.repository }}/actions/runner-registration-token/environment-variables"
+    - name: Update Last Sync Time
+      uses: actions/set-env@v1
+      with:
+        LAST_SYNC_TIME: ${{ env.LAST_SYNC_TIME }}

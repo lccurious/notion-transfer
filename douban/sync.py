@@ -2,7 +2,7 @@ import os
 import asyncio
 import time
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 import numpy as np
 from douban.douban_query import DoubanAPI
 from douban.notion_database import NotionBookDatabase, NotionMovieDatabase
@@ -41,9 +41,9 @@ class DoubanNotionSync(object):
         if last_sync_time is not None:
             return datetime.fromisoformat(last_sync_time)
         else:
-            return datetime.fromisoformat("2006-01-01T00:00:00")
+            # return datetime.fromisoformat("2006-01-01T00:00:00")
+            return datetime.now() - timedelta(days=1)
 
-    
     def _save_last_sync_time(self):
         # with open("last_sync_time.txt", "w") as f:
         #     f.write(datetime.now().isoformat())
