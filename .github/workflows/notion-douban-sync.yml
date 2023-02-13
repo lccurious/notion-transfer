@@ -18,6 +18,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    environment: notion-transfer-deploy
 
     steps:
     - uses: actions/checkout@v3
@@ -30,7 +31,18 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+  
+  run_sync:
     - name: Sync Douban to Notion
+      env:
+        NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        BASE_PAGE_ID: ${{ secrets.BASE_PAGE_ID }}
+        BOOK_DATABASE_ID: ${{ secrets.BOOK_DATABASE_ID }}
+        MOVIE_DATABASE_ID: ${{ secrets.MOVIE_DATABASE_ID }}
+        DOUBAN_COOKIE: ${{ secrets.DOUBAN_COOKIE }}
+        DOUBAN_CK: ${{ secrets.DOUBAN_CK }}
+        UID: ${{ secrets.UID }}
+        USER_AGENT: ${{ vars.USER_AGENT }}
       run: |
         # perform sync operation
         python sync_douban.py --sync
