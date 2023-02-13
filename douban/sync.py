@@ -32,16 +32,23 @@ class DoubanNotionSync(object):
         self.total = 0
     
     def _load_last_sync_time(self):
-        if os.path.exists("last_sync_time.txt"):
-            with open("last_sync_time.txt", "r") as f:
-                return datetime.fromisoformat(f.read())
+        # if os.path.exists("last_sync_time.txt"):
+        #     with open("last_sync_time.txt", "r") as f:
+        #         return datetime.fromisoformat(f.read())
+        # else:
+        #     return datetime.fromisoformat("2006-01-01T00:00:00")
+        last_sync_time = os.getenv("LAST_SYNC_TIME")
+        if last_sync_time is not None:
+            return datetime.fromisoformat(last_sync_time)
         else:
             return datetime.fromisoformat("2006-01-01T00:00:00")
+
     
     def _save_last_sync_time(self):
-        with open("last_sync_time.txt", "w") as f:
-            f.write(datetime.now().isoformat())
-    
+        # with open("last_sync_time.txt", "w") as f:
+        #     f.write(datetime.now().isoformat())
+        os.environ["LAST_SYNC_TIME"] = datetime.now().isoformat()
+
     def _random_sleep(self):
         sleep_time = np.random.uniform(0.5, 5.5)
         time.sleep(sleep_time)
