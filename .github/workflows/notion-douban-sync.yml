@@ -45,7 +45,3 @@ jobs:
       run: |
         # perform sync operation
         python sync_douban.py --sync
-    - name: Update Last Sync Time
-      uses: actions/set-env@v1
-      with:
-        LAST_SYNC_TIME: ${{ env.LAST_SYNC_TIME }}
