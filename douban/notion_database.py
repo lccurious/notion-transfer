@@ -2,10 +2,21 @@ import re
 import logging
 import abc
 import collections
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from notion_client import Client
 from notion_client import APIErrorCode, APIResponseError
 from douban.constants import MediaType
+
+
+def make_iso_datetime_str(douban_datetime):
+    """
+    将豆瓣时间转换为ISO时间
+    :param douban_datetime: 豆瓣时间
+    :return: ISO时间
+    """
+    raw_datetime = datetime.fromisoformat(douban_datetime)
+    clean_datetime = raw_datetime.replace(tzinfo=timezone(timedelta(hours=8)))
+    return clean_datetime.isoformat()
 
 
 def create_database(token, page_id, media_type):
@@ -214,8 +225,8 @@ class NotionBookDatabase(NotionDatabase):
                 "标记时间": {
                     "date": {
                         "end": None,
-                        "start": data["create_time"],
-                        "time_zone": "Asia/Shanghai"
+                        "start": make_iso_datetime_str(data["create_time"]),
+                        # "time_zone": "Asia/Shanghai"
                     },
                 },
                 "豆瓣链接": {
@@ -335,7 +346,7 @@ class NotionBookDatabase(NotionDatabase):
     
     def _parse_datetime(self, date_dict):
         raw_datetime = datetime.fromisoformat(date_dict['start'])
-        clean_datetime = raw_datetime.replace(minute=0, second=0, microsecond=0, tzinfo=None)
+        clean_datetime = raw_datetime.replace(tzinfo=timezone(timedelta(hours=8)))
         return clean_datetime
 
     def compare(self, l, r):
@@ -431,8 +442,8 @@ class NotionMovieDatabase(NotionDatabase):
                 "标记时间": {
                     "date": {
                         "end": None,
-                        "start": data["create_time"],
-                        "time_zone": "Asia/Shanghai"
+                        "start": make_iso_datetime_str(data["create_time"]),
+                        # "time_zone": "Asia/Shanghai"
                     },
                 },
                 "封面": {
@@ -587,7 +598,7 @@ class NotionMovieDatabase(NotionDatabase):
 
     def _parse_datetime(self, date_dict):
         raw_datetime = datetime.fromisoformat(date_dict['start'])
-        clean_datetime = raw_datetime.replace(minute=0, second=0, microsecond=0, tzinfo=None)
+        clean_datetime = raw_datetime.replace(tzinfo=timezone(timedelta(hours=8)))
         return clean_datetime
 
     def compare(self, l, r):

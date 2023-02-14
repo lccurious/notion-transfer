@@ -2,7 +2,7 @@ import os
 import asyncio
 import time
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import numpy as np
 from douban.douban_query import DoubanAPI
 from douban.notion_database import NotionBookDatabase, NotionMovieDatabase
@@ -42,7 +42,7 @@ class DoubanNotionSync(object):
             return datetime.fromisoformat(last_sync_time)
         else:
             # return datetime.fromisoformat("2006-01-01T00:00:00")
-            return datetime.now() - timedelta(days=1)
+            return datetime.now().replace(tzinfo=timezone(timedelta(hours=8))) - timedelta(days=1)
 
     def _save_last_sync_time(self):
         # with open("last_sync_time.txt", "w") as f:
@@ -110,7 +110,8 @@ class DoubanNotionSync(object):
     def sync_interests(self, interests, interest_type):
         loop = asyncio.get_event_loop()
         for interest in interests:
-            timestamp = datetime.fromisoformat(interest['create_time'])
+            # 豆瓣记录的时间是 UTC+8
+            timestamp = datetime.fromisoformat(interest['create_time']).replace(tzinfo=timezone(timedelta(hours=8)))
             if timestamp <= self.last_sync_time:
                 return 'Already synced'
 
