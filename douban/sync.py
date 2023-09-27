@@ -10,16 +10,16 @@ from douban.notion_database import NotionBookDatabase, NotionMovieDatabase
 
 class DoubanNotionSync(object):
     def __init__(self, 
-                 user_agent, 
-                 cookie, 
-                 ck, 
-                 uid, 
-                 token, 
-                 movie_database_id, 
-                 book_database_id) -> None:
-        self.api = DoubanAPI(user_agent=user_agent,
-                             cookie=cookie,
-                             ck=ck)
+                 user_agent: str, 
+                 cookie: str, 
+                 ck: str, 
+                 uid: str, 
+                 token: str, 
+                 movie_database_id: str, 
+                 book_database_id: str) -> None:
+        self.api = DoubanAPI(user_agent=str(user_agent),
+                             cookie=str(cookie),
+                             ck=str(ck))
         self.uid = uid
         self.movie_db = NotionMovieDatabase(
             notion_token=token,

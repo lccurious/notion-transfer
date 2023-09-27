@@ -35,8 +35,10 @@ pip install -r requirements.txt
    - `DOUBAN_COOKIE` 填写登录过豆瓣以后获得的cookie，打开F12
      ![douban_network](images/douban_network.png)
      ![douban_headers](images/douban_header.png)
-     `DOUBAN_CK` 从Cookie中寻找对应字段
-     `USER_AGENT` 从header中寻找对应字段   
+   
+   - `DOUBAN_CK` 从Cookie中寻找对应字段
+     
+   - `USER_AGENT` 从header中寻找对应字段   
 
    - `UID` 你的豆瓣ID：<https://www.douban.com/people/UID>
 

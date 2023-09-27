@@ -2,7 +2,13 @@
 
 ## [Unreleased]
 
+### Added
+
 - 增加GitHub定时Action
+
+### Fixed
+
+- 修改影片上映时间缺失导致notion导入未定义字段错误
 
 ## [0.0.1] - 2022-11-29
 

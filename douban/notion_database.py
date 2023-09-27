@@ -335,14 +335,14 @@ class NotionBookDatabase(NotionDatabase):
             body = self.construct_data(item)
             self.notion.pages.create(**body)
         except Exception as err:
-            logging.error(f"创建书籍{item['subject']['title']}失败:{err}")
+            logging.error(f"创建书籍 {item['subject']['title']}失败:{err}")
 
     def update_item(self, page_id, item):
         try:
             body = self.construct_data(item)
             self.notion.pages.update(page_id=page_id, **body)
         except Exception as err:
-            logging.error(f"更新书籍{item['subject']['title']}失败:{err}")
+            logging.error(f"更新书籍 {item['subject']['title']}失败:{err}")
     
     def _parse_datetime(self, date_dict):
         raw_datetime = datetime.fromisoformat(date_dict['start'])
@@ -420,20 +420,20 @@ class NotionMovieDatabase(NotionDatabase):
                     # NOTE: Notion select property can not accept comas
                     "multi_select": [d for d in data["subject"]["directors"] if d["name"]]
                 }, 
-                "主演": {
-                    # notion 最多支持100个选项
-                    "multi_select": [a for a in data["subject"]["actors"] if a["name"]][:50]
-                },
+                # "主演": {
+                #     # notion 最多支持100个选项
+                #     "multi_select": [a for a in data["subject"]["actors"] if a["name"]][:50]
+                # },
                 "类型": {
                     "multi_select": [
                         {"name": genre} for genre in data["subject"]["genres"]
                     ]
                 },
-                "时间": {
-                    "select": {
-                        "name": data["subject"]["pubdate"][0][:4] if data["subject"]["pubdate"] else ""
-                    },
-                },
+                # "时间": {
+                #     "select": {
+                #         "name": data["subject"]["pubdate"][0][:4] if data["subject"]["pubdate"] else ""
+                #     },
+                # },
                 "标记状态": {
                     "select": {
                         "name": self.movie_status_name_dict[data["status"]],
@@ -460,6 +460,25 @@ class NotionMovieDatabase(NotionDatabase):
                 }
             }
         }
+
+        if 'actors' in data['subject'] and data['subject']['actors']:
+            body["properties"].update({
+                "主演": {
+                    "multi_select": [
+                        # NOTE: Notion select property can not accept comas
+                        {"name": actor["name"].replace(',', '')} for actor in data["subject"]["actors"]
+                    ]
+                },
+            })
+
+        if 'pubdate' in data['subject'] and data['subject']['pubdate']:
+            body["properties"].update({
+                "时间": {
+                    "select": {
+                        "name": data['subject']['pubdate'][0][:4],
+                    }
+                },
+            })
 
         if 'screenwriter' in data['subject'] and data['subject']['screenwriter']:
             body["properties"].update({
@@ -587,14 +606,14 @@ class NotionMovieDatabase(NotionDatabase):
             body = self.construct_data(item)
             self.notion.pages.create(**body)
         except Exception as err:
-            logging.error(f"创建电影{item['subject']['title']}失败:{err}")
+            logging.error(f"创建电影 {item['subject']['title']} 失败:{err}")
 
     def update_item(self, page_id, item):
         try:
             body = self.construct_data(item)
             self.notion.pages.update(page_id=page_id, **body)
         except Exception as err:
-            logging.error(f"更新电影{item['subject']['title']}失败:{err}")
+            logging.error(f"更新电影 {item['subject']['title']} 失败:{err}")
 
     def _parse_datetime(self, date_dict):
         raw_datetime = datetime.fromisoformat(date_dict['start'])
