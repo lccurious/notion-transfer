@@ -174,7 +174,7 @@ class DoubanAPI(object):
         imdb = info_list[info_list.index('IMDb:') + 1] if 'IMDb:' in info_list else ""
         length = info_list[info_list.index('片长:') + 1] if '片长:' in info_list else ""
         # movie_duration = length.split("分钟")[0] if length else ""
-        movie_duration = re.match(r'(\d+)分钟', length).group(1) if length else ""
+        movie_duration = re.match(r'(\d+).*分钟', length).group(1) if length else ""
 
         related_info = soup.select("#content > div > div.article > div > div.indent > span")
         related_infos = get_media_related_infos(related_info)
