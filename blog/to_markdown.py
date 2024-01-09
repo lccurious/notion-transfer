@@ -23,12 +23,12 @@ def main(args):
     token = os.getenv("NOTION_TOKEN")
 
     notion = Client(auth=token)
-    match = re.search(r"/([a-f0-9]{32})", args.page_url)
-    # if match:
-    #     page_id = match.group(1)
-    # else:
-    #     raise ValueError("Invalid page url")
-    blocks = collect_paginated_api(notion.blocks.children.list, block_id=args.page_url)
+    match = re.search(r"https://www.notion.so/[\w-]+/[\w-]*([a-f0-9]{32})[\\w-]*", args.page_url)
+    if match:
+        page_id = match.group(1)
+    else:
+        raise ValueError("Invalid page url")
+    blocks = collect_paginated_api(notion.blocks.children.list, block_id=page_id)
 
     asset_path = Path(args.output).parent / Path(args.output).stem
     asset_path.mkdir(parents=True, exist_ok=True)
