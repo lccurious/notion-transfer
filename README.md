@@ -63,3 +63,10 @@ pip install -r requirements.txt
    # 分 时 日 月 周
    30 4 * * * source activate notion; cd /home/ubuntu/app/notion-transfer && python sync_douban.py --sync; source deactive
    ```
+
+## Notion to Markdown
+
+1. 使用说明
+   ```bash
+   python blog/to_markdown.py -i PAGE_ID -o output.md
+   ```

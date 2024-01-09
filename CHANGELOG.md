@@ -5,6 +5,7 @@
 ### Added
 
 - 增加GitHub定时Action
+- 增加 Notion 到 Markdown 文件的格式转换
 
 ### Fixed
 
