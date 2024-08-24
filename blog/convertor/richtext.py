@@ -46,7 +46,6 @@ def equation(content: str):
     content = re.sub(r'(?<!\\)\|', r'\\vert ', content)
     content = re.sub(r'\\lang', r'\\langle', content)
     content = re.sub(r'\\rang', r'\\rangle', content)
-    content = re.sub(r'\\Re', r'\\mathbb{R}', content)
     return f"$${content}$$"
 
 

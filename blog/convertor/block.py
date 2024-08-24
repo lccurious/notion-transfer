@@ -101,7 +101,7 @@ class BlockConvertor:
                     depth += 1
                     child_blocks = self._client.get_children(block["id"])
                     outcome_block = outcome_block.lstrip("> ").rstrip("\n{: .block-tip }\n\n")
-                    converted_block = outcome_block + self.create_callout(callout_blocks=child_blocks, depth=depth)
+                    converted_block = outcome_block + "\n" + self.create_callout(callout_blocks=child_blocks, depth=depth)
                     outcome_block = "\n".join(["> " + line for line in converted_block.split("\n")])
                     outcome_block = outcome_block.rstrip("\n") + "\n{: .block-tip }\n\n"
                 # create table block
@@ -358,9 +358,7 @@ def equation(info: dict) -> str:
     replaced_text = re.sub(r'(?<!\\)\|', r'\\vert ', replaced_text)
     replaced_text = re.sub(r'\\lang', r'\\langle', replaced_text)
     replaced_text = re.sub(r'\\rang', r'\\rangle', replaced_text)
-    replaced_text = re.sub(r'\\Re', r'\\mathbb{R}', replaced_text)
-    equation_text = f"""
-$$
+    equation_text = f"""$$
 \\begin{{equation}}
 {replaced_text}
 \\end{{equation}}
