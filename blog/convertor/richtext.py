@@ -3,6 +3,7 @@ Adapted from https://github.com/echo724/notion2md/blob/8eb7747dd81e513d3d3baef95
 """
 
 import os
+import re
 from notion_client import Client
 
 
@@ -40,7 +41,13 @@ def color(content: str, color):
 
 
 def equation(content: str):
-    return f" ${content}$ "
+    content = re.sub(r'\\bm\{([^}]*)\}', r'\\boldsymbol{\1}', content)
+    content = re.sub(r'\\argmin', r'\\mathop{\\arg\\min}', content)
+    content = re.sub(r'(?<!\\)\|', r'\\vert ', content)
+    content = re.sub(r'\\lang', r'\\langle', content)
+    content = re.sub(r'\\rang', r'\\rangle', content)
+    content = re.sub(r'\\Re', r'\\mathbb{R}', content)
+    return f"$${content}$$"
 
 
 annotation_map = {

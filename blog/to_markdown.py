@@ -13,6 +13,40 @@ from convertor.block import BlockConvertor, NotionClient
 load_dotenv()
 
 
+def generate_front_matter(title: str, date: str, tags: list, categories: list, thumbnail: str, giscus_comments: bool, toc_sidebar: bool) -> str:
+    """
+    自动生成Jekyll博客帖子的YAML Front Matter头部。
+
+    参数:
+    - title: 文章标题
+    - date: 发布日期，格式: YYYY-MM-DD
+    - tags: 文章标签列表
+    - categories: 文章分类列表
+    - thumbnail: 文章缩略图路径
+    - giscus_comments: 是否启用Giscus评论
+    - toc_sidebar: 目录是否侧栏显示
+    """
+    # 将标签和分类列表转换为YAML格式的字符串
+    tags_str = "\n  - ".join(tags)
+    categories_str = "\n  - ".join(categories)
+    
+    return (
+        f"---\n"
+        f"layout: post\n"
+        f"title: {title}\n"
+        f"date: {date}\n"
+        f"tags:\n"
+        f"  - {tags_str}\n"
+        f"categories:\n"
+        f"  - {categories_str}\n"
+        f"thumbnail: {thumbnail}\n"
+        f"giscus_comments: {'true' if giscus_comments else 'false'}\n"
+        f"toc:\n"
+        f"  sidebar: {'true' if toc_sidebar else 'false'}\n"
+        f"---\n"
+    )
+
+
 def main(args):
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(filename)s %(levelname)s %(message)s',
@@ -37,7 +71,16 @@ def main(args):
     
     notion_client = NotionClient()
     convertor = BlockConvertor(notion_client, download=True, tmp_path=asset_path)
-    md_file = convertor.convert(blocks)
+    md_head = generate_front_matter(
+        title="Extend LLMs Context Window",
+        date="2024-08-24",
+        tags=["LLMs"],
+        categories=["Machine Learning"],
+        thumbnail="assets/img/2024-02-25-Extend-LLMs-Context-Window/9448554a_Untitled.png",
+        giscus_comments=True,
+        toc_sidebar=False
+    )
+    md_file = md_head + "\n\n" + convertor.convert(blocks)
 
     with open(args.output, "w", encoding="utf-8") as fp:
         fp.write(md_file)
