@@ -72,13 +72,13 @@ def main(args):
     notion_client = NotionClient()
     convertor = BlockConvertor(notion_client, download=True, tmp_path=asset_path)
     md_head = generate_front_matter(
-        title="Extend LLMs Context Window",
-        date="2024-08-24",
-        tags=["LLMs"],
-        categories=["Machine Learning"],
-        thumbnail="assets/img/2024-02-25-Extend-LLMs-Context-Window/9448554a_Untitled.png",
-        giscus_comments=True,
-        toc_sidebar=False
+        title=args.title,
+        date=args.date,
+        tags=args.tags,
+        categories=args.categories,
+        thumbnail=args.thumbnail,
+        giscus_comments=args.giscus_comments,
+        toc_sidebar=args.toc_sidebar
     )
     md_file = md_head + "\n\n" + convertor.convert(blocks)
 
@@ -90,6 +90,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--page_url", help="Specify the page url, ⌘ + L to copy the link to the page", required=True)
     parser.add_argument("-o", "--output", help="Specify the output file name", default="output.md")
+    parser.add_argument('--title', required=True, help='Title of the post')
+    parser.add_argument('--date', required=True, help='Date of the post')
+    parser.add_argument('--tags', required=True, nargs='+', help='Tags of the post, space-separated')
+    parser.add_argument('--categories', required=True, nargs='+', help='Categories of the post, space-separated')
+    parser.add_argument('--thumbnail', required=False, help='Thumbnail path of the post')
+    parser.add_argument('--giscus_comments', action='store_true', help='Enable Giscus comments if set')
+    parser.add_argument('--toc_sidebar', action='store_true', help='Enable TOC sidebar if set')
 
     args = parser.parse_args()
     main(args)
