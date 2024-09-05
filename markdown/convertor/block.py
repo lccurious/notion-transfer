@@ -5,8 +5,10 @@ Adapted from https://github.com/echo724/notion2md/blob/8eb7747dd81e513d3d3baef95
 import concurrent.futures
 import hashlib
 import os
+import re
 import logging
 import urllib.request as request
+from pathlib import Path
 from urllib.parse import urlparse
 
 from .richtext import richtext_convertor
@@ -58,6 +60,7 @@ class BlockConvertor:
     def __init__(self, client: NotionClient, download=True, tmp_path="./tmp"):
         self.download = download
         self.tmp_path = tmp_path
+        self.asset_root = "assets/{asset_type}/" + Path(tmp_path).stem
         self._client = client
 
     def convert(self, blocks: dict) -> str:
@@ -94,6 +97,13 @@ class BlockConvertor:
                 if block_type == "child_page":
                     # call make_child_function
                     pass
+                elif block_type == "callout":
+                    depth += 1
+                    child_blocks = self._client.get_children(block["id"])
+                    outcome_block = outcome_block.lstrip("> ").rstrip("\n{: .block-tip }\n\n")
+                    converted_block = outcome_block + "\n" + self.create_callout(callout_blocks=child_blocks, depth=depth)
+                    outcome_block = "\n".join(["> " + line for line in converted_block.split("\n")])
+                    outcome_block = outcome_block.rstrip("\n")
                 # create table block
                 elif block_type == "table":
                     depth += 1
@@ -116,6 +126,15 @@ class BlockConvertor:
         except Exception as e:
             logging.error(f"{e}: Error occured block_type:{block_type}")
         return outcome_block
+    
+    def create_callout(self, callout_blocks: dict, depth=1):
+        callout_text = ""
+        for block in callout_blocks:
+            converted_block = self.convert_block(
+                block,
+            )
+            callout_text += converted_block.rstrip("\n") + "\n"
+        return callout_text
 
     def create_table(self, cell_blocks: dict):
         table_list = []
@@ -170,6 +189,7 @@ class BlockConvertor:
             name, file_path = self.download_file(info["url"])
             info["file_name"] = name
             info["file_path"] = file_path
+            info["asset_root"] = self.asset_root
         if "language" in payload:
             info["language"] = payload["language"]
         # interal url
@@ -178,6 +198,7 @@ class BlockConvertor:
             name, file_path = self.download_file(info["url"])
             info["file_name"] = name
             info["file_path"] = file_path
+            info["asset_root"] = self.asset_root
         # table cells
         return info
 
@@ -236,7 +257,10 @@ def heading_3(info: dict) -> str:
 
 
 def callout(info: dict) -> str:
-    return f"{info['icon']} {info['text']}"
+    content = f"{info['icon']} {info['text']}"
+    content = "\n".join(["> " + line for line in content.split("\n")])
+    # content += "\n{: .block-tip }\n\n"
+    return content
 
 
 def quote(info: dict) -> str:
@@ -318,7 +342,19 @@ def bookmark(info: dict) -> str:
 
 
 def equation(info: dict) -> str:
-    return f" $${info['text']}$$ "
+    bm_pattern = r'\\bm\{([^}]*)\}'
+    replaced_text = re.sub(bm_pattern, r'\\boldsymbol{\1}', info["text"])
+    replaced_text = re.sub(r'\\argmin', r'\\mathop{\\arg\\min}', replaced_text)
+    replaced_text = re.sub(r'(?<!\\)\|', r'\\vert ', replaced_text)
+    replaced_text = re.sub(r'\\lang', r'\\langle', replaced_text)
+    replaced_text = re.sub(r'\\rang', r'\\rangle', replaced_text)
+    equation_text = f"""$$
+\\begin{{equation}}
+{replaced_text}
+\\end{{equation}}
+$$
+"""
+    return equation_text
 
 
 def divider(info: dict) -> str:
@@ -326,7 +362,7 @@ def divider(info: dict) -> str:
 
 
 def blank() -> str:
-    return "<br/>"
+    return ""
 
 
 def table_row(info: list) -> list:
