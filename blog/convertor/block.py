@@ -114,6 +114,16 @@ class BlockConvertor:
                     depth += 1
                     child_blocks = self._client.get_children(block["id"])
                     outcome_block = self.create_column_list(column_blocks=child_blocks)
+                elif block_type == "toggle":
+                    depth += 1
+                    child_blocks = self._client.get_children(block["id"])
+                    for block in child_blocks:
+                        converted_block = self.convert_block(
+                            block,
+                            depth,
+                        )
+                        outcome_block += converted_block
+                    outcome_block += "{% enddetails %}\n\n"
                 else:
                     depth += 1
                     child_blocks = self._client.get_children(block["id"])
@@ -272,6 +282,11 @@ def bulleted_list_item(info: dict) -> str:
     return f"- {info['text']}"
 
 
+def toggle_item(info: dict) -> str:
+    toggle_text = "{% details " + info["text"] + " %}"
+    return toggle_text
+
+
 # numbering is not supported
 def numbered_list_item(info: dict) -> str:
     """
@@ -415,7 +430,7 @@ BLOCK_TYPES = {
     "heading_2": heading_2,
     "heading_3": heading_3,
     "callout": callout,
-    "toggle": bulleted_list_item,
+    "toggle": toggle_item,
     "quote": quote,
     "bulleted_list_item": bulleted_list_item,
     "numbered_list_item": numbered_list_item,
