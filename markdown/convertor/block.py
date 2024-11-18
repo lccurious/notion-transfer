@@ -87,10 +87,10 @@ class BlockConvertor:
                     BLOCK_TYPES[block_type](
                         self.collect_info(block[block_type])
                     )
-                    + "\n\n"
+                    + "\n"
                 )
             else:
-                outcome_block = f"[//]: # ({block_type} is not supported)\n\n"
+                outcome_block = f"[//]: # ({block_type} is not supported)\n"
             # Convert child block
             if block["has_children"]:
                 # create child page
@@ -100,7 +100,7 @@ class BlockConvertor:
                 elif block_type == "callout":
                     depth += 1
                     child_blocks = self._client.get_children(block["id"])
-                    outcome_block = outcome_block.lstrip("> ").rstrip("\n{: .block-tip }\n\n")
+                    outcome_block = outcome_block.lstrip("> ").rstrip("\n{: .block-tip }\n")
                     converted_block = outcome_block + "\n" + self.create_callout(callout_blocks=child_blocks, depth=depth)
                     outcome_block = "\n".join(["> " + line for line in converted_block.split("\n")])
                     outcome_block = outcome_block.rstrip("\n")
@@ -162,12 +162,12 @@ class BlockConvertor:
         table = "| "
         for cell_block in column_blocks:
             blocks = self._client.get_children(cell_block["id"])
-            block_str = self.to_string(blocks).replace('\n\n', '<br/>')
+            block_str = self.to_string(blocks).replace('\n', '<br/>')
             table_list.append(block_str)
             table += block_str
             table += " |"
         table += "\n"
-        table += ("| " + " | ".join(["----"] * len(table_list)) + " |" + "\n\n")
+        table += ("| " + " | ".join(["----"] * len(table_list)) + " |" + "\n")
         return table
 
     def collect_info(self, payload: dict) -> dict:
@@ -259,7 +259,7 @@ def heading_3(info: dict) -> str:
 def callout(info: dict) -> str:
     content = f"{info['icon']} {info['text']}"
     content = "\n".join(["> " + line for line in content.split("\n")])
-    # content += "\n{: .block-tip }\n\n"
+    # content += "\n{: .block-tip }\n"
     return content
 
 
@@ -320,7 +320,7 @@ def image(info: dict) -> str:
 
     if info["caption"]:
         return (
-            f"![{info['file_name']}]({info['file_path']})\n\n{info['caption']}"
+            f"![{info['file_name']}]({info['file_path']})\n{info['caption']}"
         )
     else:
         return f"![{info['file_name']}]({info['file_path']})"
@@ -336,7 +336,7 @@ def bookmark(info: dict) -> str:
     input: item:dict ={"url":str,"text":str,"caption":str}
     """
     if info["caption"]:
-        return f"[{info['url']}]({info['url']})\n\n{info['caption']}"
+        return f"[{info['url']}]({info['url']})\n{info['caption']}"
     else:
         return f"[{info['url']}]({info['url']})"
 
