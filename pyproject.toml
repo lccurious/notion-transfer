@@ -1,0 +1,13 @@
+[project]
+name = "notion-transfer"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "aiohttp>=3.13.1",
+    "beautifulsoup4>=4.14.2",
+    "notion-client==1.0.0",
+    "numpy>=1.23.5",
+    "python-dotenv>=1.2.0",
+]
